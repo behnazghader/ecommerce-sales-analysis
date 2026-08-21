@@ -1,0 +1,8 @@
+# Raw datasets
+data/raw/
+
+# macOS
+.DS_Store
+
+# Power BI temporary files
+*.tmp

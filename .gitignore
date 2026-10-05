@@ -6,3 +6,5 @@ data/raw/
 
 # Power BI temporary files
 *.tmp
+# Generated processed datasets
+data/processed/

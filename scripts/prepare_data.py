@@ -12,15 +12,40 @@ PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 # Load data
 # --------------------------------------------------
 
-customers = pd.read_csv(RAW_DIR / "olist_customers_dataset.csv")
-orders = pd.read_csv(RAW_DIR / "olist_orders_dataset.csv")
-order_items = pd.read_csv(RAW_DIR / "olist_order_items_dataset.csv")
-products = pd.read_csv(RAW_DIR / "olist_products_dataset.csv")
+customers = pd.read_csv(
+    RAW_DIR / "olist_customers_dataset.csv"
+)
+
+orders = pd.read_csv(
+    RAW_DIR / "olist_orders_dataset.csv"
+)
+
+order_items = pd.read_csv(
+    RAW_DIR / "olist_order_items_dataset.csv"
+)
+
+products = pd.read_csv(
+    RAW_DIR / "olist_products_dataset.csv"
+)
+
 translation = pd.read_csv(
     RAW_DIR / "product_category_name_translation.csv"
 )
+
 geolocation = pd.read_csv(
     RAW_DIR / "olist_geolocation_dataset.csv"
+)
+
+payments = pd.read_csv(
+    RAW_DIR / "olist_order_payments_dataset.csv"
+)
+
+reviews = pd.read_csv(
+    RAW_DIR / "olist_order_reviews_dataset.csv"
+)
+
+sellers = pd.read_csv(
+    RAW_DIR / "olist_sellers_dataset.csv"
 )
 
 
@@ -42,10 +67,23 @@ for column in order_date_columns:
         errors="coerce",
     )
 
+
 order_items["shipping_limit_date"] = pd.to_datetime(
     order_items["shipping_limit_date"],
     errors="coerce",
 )
+
+
+review_date_columns = [
+    "review_creation_date",
+    "review_answer_timestamp",
+]
+
+for column in review_date_columns:
+    reviews[column] = pd.to_datetime(
+        reviews[column],
+        errors="coerce",
+    )
 
 
 # --------------------------------------------------
@@ -57,10 +95,12 @@ orders["delivery_days"] = (
     - orders["order_purchase_timestamp"]
 ).dt.total_seconds() / 86400
 
+
 orders["delivery_delay_days"] = (
     orders["order_delivered_customer_date"]
     - orders["order_estimated_delivery_date"]
 ).dt.total_seconds() / 86400
+
 
 orders["is_late_delivery"] = (
     orders["order_delivered_customer_date"]
@@ -78,15 +118,21 @@ products = products.merge(
     how="left",
 )
 
+
 manual_translations = {
     "pc_gamer": "pc_gamer",
     "portateis_cozinha_e_preparadores_de_alimentos":
         "portable_kitchen_and_food_preparation_appliances",
 }
 
+
 products["product_category_name_english"] = (
     products["product_category_name_english"]
-    .fillna(products["product_category_name"].map(manual_translations))
+    .fillna(
+        products["product_category_name"].map(
+            manual_translations
+        )
+    )
     .fillna("unknown")
 )
 
@@ -97,12 +143,22 @@ products["product_category_name_english"] = (
 
 geolocation = geolocation.drop_duplicates()
 
+
 geo_lookup = (
     geolocation
-    .groupby("geolocation_zip_code_prefix", as_index=False)
+    .groupby(
+        "geolocation_zip_code_prefix",
+        as_index=False,
+    )
     .agg(
-        geolocation_lat=("geolocation_lat", "median"),
-        geolocation_lng=("geolocation_lng", "median"),
+        geolocation_lat=(
+            "geolocation_lat",
+            "median",
+        ),
+        geolocation_lng=(
+            "geolocation_lng",
+            "median",
+        ),
     )
 )
 
@@ -136,6 +192,25 @@ geo_lookup.to_csv(
     index=False,
 )
 
+payments.to_csv(
+    PROCESSED_DIR / "payments.csv",
+    index=False,
+)
+
+reviews.to_csv(
+    PROCESSED_DIR / "reviews.csv",
+    index=False,
+)
+
+sellers.to_csv(
+    PROCESSED_DIR / "sellers.csv",
+    index=False,
+)
+
+
+# --------------------------------------------------
+# Summary
+# --------------------------------------------------
 
 print("Processed datasets created successfully.")
 print(f"Customers: {len(customers):,}")
@@ -143,3 +218,6 @@ print(f"Orders: {len(orders):,}")
 print(f"Order items: {len(order_items):,}")
 print(f"Products: {len(products):,}")
 print(f"Geolocation lookup: {len(geo_lookup):,}")
+print(f"Payments: {len(payments):,}")
+print(f"Reviews: {len(reviews):,}")
+print(f"Sellers: {len(sellers):,}")

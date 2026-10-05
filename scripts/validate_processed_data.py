@@ -70,4 +70,40 @@ print(
     f"{orphan_items.sum():,}"
 )
 
+# 6. Payments, reviews, and sellers
+print("\n6. Payments, reviews, and sellers")
+
+payments = pd.read_csv(PROCESSED_DIR / "payments.csv")
+reviews = pd.read_csv(PROCESSED_DIR / "reviews.csv")
+sellers = pd.read_csv(PROCESSED_DIR / "sellers.csv")
+
+orphan_payments = ~payments["order_id"].isin(orders["order_id"])
+orphan_reviews = ~reviews["order_id"].isin(orders["order_id"])
+orphan_sellers = ~order_items["seller_id"].isin(sellers["seller_id"])
+
+print(
+    f"Payments without matching order: "
+    f"{orphan_payments.sum():,}"
+)
+
+print(
+    f"Reviews without matching order: "
+    f"{orphan_reviews.sum():,}"
+)
+
+print(
+    f"Order items without matching seller: "
+    f"{orphan_sellers.sum():,}"
+)
+
+print(
+    f"Missing payment values: "
+    f"{payments['payment_value'].isna().sum():,}"
+)
+
+print(
+    f"Missing review scores: "
+    f"{reviews['review_score'].isna().sum():,}"
+)
+
 print("\nValidation completed.")

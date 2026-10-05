@@ -8,3 +8,5 @@ data/raw/
 *.tmp
 # Generated processed datasets
 data/processed/
+
+data/ecommerce.db

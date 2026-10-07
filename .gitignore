@@ -4,9 +4,15 @@ data/raw/
 # macOS
 .DS_Store
 
-# Power BI temporary files
+# Temporary files
 *.tmp
 # Generated processed datasets
 data/processed/
 
 data/ecommerce.db
+# Tableau temporary files
+*.twbr
+
+# Python cache
+__pycache__/
+*.pyc

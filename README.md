@@ -35,15 +35,17 @@ The project uses the **Brazilian E-Commerce Public Dataset by Olist** and covers
 
 ## Project Structure
 
+```text
 ├── Tableau/
 ├── data/
-│ ├── raw/
-│ └── processed/
+│   ├── raw/
+│   └── processed/
 ├── images/
 ├── scripts/
 ├── sql/
 ├── README.md
 └── LICENSE
+```
 
 ## Run the Project
 
